@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "title": "The Art of Minimalist Living",
+    "author": "Sarah Johnson",
+    "date": "2025-09-10",
+    "category": "Lifestyle",
+    "content": "Minimalist living isn't just about owning fewer things. It's about finding freedom, clarity, and peace in simplicity. In this blog, we explore practical tips to declutter your life, create a mindful home, and focus on what truly matters.",
+    "image": "https://example.com/images/minimalism.jpg",
+    "likes": 340
+  },
+  {
+    "id": 2,
+    "title": "Mastering React Hooks in 2025",
+    "author": "John Smith",
+    "date": "2025-09-12",
+    "category": "Technology",
+    "content": "React Hooks have transformed the way we write React applications. In this article, we break down useState, useEffect, and custom hooks with examples that you can start using today to build cleaner and more efficient React apps.",
+    "image": "https://example.com/images/react-hooks.jpg",
+    "likes": 420
+  },
+  {
+    "id": 3,
+    "title": "10 Healthy Breakfast Ideas",
+    "author": "Emily Davis",
+    "date": "2025-09-14",
+    "category": "Food",
+    "content": "Breakfast is the most important meal of the day. This blog covers 10 delicious, easy-to-make, and healthy breakfast options that give you the energy boost you need for the day ahead.",
+    "image": "https://example.com/images/breakfast.jpg",
+    "likes": 295
+  },
+  {
+    "id": 4,
+    "title": "Top 5 Destinations for Solo Travelers",
+    "author": "Michael Lee",
+    "date": "2025-09-15",
+    "category": "Travel",
+    "content": "Solo travel can be one of the most rewarding experiences of your life. We list the top 5 destinations perfect for solo travelers in 2025, including safety tips and budget-friendly hacks.",
+    "image": "https://example.com/images/solo-travel.jpg",
+    "likes": 380
+  },
+  {
+    "id": 5,
+    "title": "A Beginner's Guide to Meditation",
+    "author": "Sophia Brown",
+    "date": "2025-09-17",
+    "category": "Health",
+    "content": "Meditation helps reduce stress and improve focus. In this beginner's guide, we explain simple meditation techniques, tips for staying consistent, and how to integrate mindfulness into your daily routine.",
+    "image": "https://example.com/images/meditation.jpg",
+    "likes": 415
+  }
+]
