@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
-import axios from "axios";
+import { database } from "../firebase/firebase";
+import { ref, onValue } from "firebase/database";
+import { Link } from "react-router-dom";
 
-const FeaturedPosts = () => {
+const FeaturedPostsFirebase = () => {
     const [posts, setPosts] = useState([]);
 
     const cardVariant = {
@@ -17,12 +18,15 @@ const FeaturedPosts = () => {
     };
 
     useEffect(() => {
-        const fetchFeaturedPosts = async () => {
-            try {
-                const response = await axios.get("http://localhost:5000/api/blogs");
-                const allBlogs = Array.isArray(response.data) ? response.data : [];
+        const postsRef = ref(database, "posts");
+        onValue(postsRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const allBlogs = Object.entries(data).map(([id, blog]) => ({
+                    id,
+                    ...blog,
+                }));
 
-                // Fisher-Yates shuffle to randomly pick 3 posts
                 const shuffled = [...allBlogs];
                 for (let i = shuffled.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
@@ -30,11 +34,8 @@ const FeaturedPosts = () => {
                 }
 
                 setPosts(shuffled.slice(0, Math.min(3, shuffled.length)));
-            } catch (err) {
-                console.error("Error fetching featured posts:", err);
             }
-        };
-        fetchFeaturedPosts();
+        });
     }, []);
 
     return (
@@ -66,28 +67,29 @@ const FeaturedPosts = () => {
                             animate="visible"
                             transition={{ delay: index * 0.1 }}
                         >
-                            <img
-                                src={post.image || post.imageUrl}
-                                alt={post.title}
-                                className="w-full h-48 object-cover"
-                            />
-                            <div className="p-6">
-                                <span className="text-sm font-semibold text-indigo-600">
-                                    {post.category}
-                                </span>
-                                <h3 className="text-xl font-bold text-gray-900 mt-2 mb-2">
-                                    {post.title}
-                                </h3>
-                                <p className="text-gray-700 leading-relaxed mb-4">
-                                    {(post.content || post.excerpt)?.slice(0, 100)}...
-                                </p>
-                                <a
-                                    href={`/post/${post.id}`}
-                                    className="font-semibold text-gray-900 hover:text-indigo-600 transition-colors"
-                                >
-                                    Read More &rarr;
-                                </a>
-                            </div>
+                            <Link to={`/posts/${post.id}`}>
+                                {post.image && (
+                                    <img
+                                        src={post.image}
+                                        alt={post.title}
+                                        className="w-full h-48 object-cover"
+                                    />
+                                )}
+                                <div className="p-6">
+                                    <span className="text-sm font-semibold text-indigo-600">
+                                        {post.category}
+                                    </span>
+                                    <h3 className="text-xl font-bold text-gray-900 mt-2 mb-2">
+                                        {post.title}
+                                    </h3>
+                                    <p className="text-gray-700 leading-relaxed mb-4">
+                                        {post.content?.slice(0, 300)}...
+                                    </p>
+                                    <span className="font-semibold text-gray-900 hover:text-indigo-600 transition-colors">
+                                        Read More &rarr;
+                                    </span>
+                                </div>
+                            </Link>
                         </motion.div>
                     ))}
                 </div>
@@ -96,4 +98,4 @@ const FeaturedPosts = () => {
     );
 };
 
-export default FeaturedPosts;
+export default FeaturedPostsFirebase;

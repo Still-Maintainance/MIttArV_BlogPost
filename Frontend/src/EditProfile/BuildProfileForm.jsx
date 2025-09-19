@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { database, auth } from "../firebase/firebase"; // import firebase
+import { ref, set } from "firebase/database";
 
 const BuildProfileForm = () => {
     const [formData, setFormData] = useState({
@@ -9,27 +11,51 @@ const BuildProfileForm = () => {
         profilePic: null,
     });
 
+    const [feedback, setFeedback] = useState({ message: "", type: "" });
+
     const handleChange = (e) => {
         const { name, value, files } = e.target;
         setFormData({ ...formData, [name]: files ? files[0] : value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Profile Data:", formData);
-        alert("Profile submitted successfully!");
+
+        try {
+            const user = auth.currentUser;
+            if (!user) {
+                alert("You must be logged in to submit a profile!");
+                return;
+            }
+
+            // If you want to store the profile picture as URL, you'd normally upload it to Firebase Storage first.
+            // For simplicity, we will just store the file name here.
+            const profileData = {
+                uid: user.uid,
+                email: user.email,
+                name: formData.name,
+                dob: formData.dob,
+                bio: formData.bio,
+                profilePicName: formData.profilePic?.name || null,
+            };
+
+            // Save profile in "profiles" collection using UID as key
+            await set(ref(database, `profiles/${user.uid}`), profileData);
+
+            setFeedback({ message: "Profile saved successfully!", type: "success" });
+            setTimeout(() => setFeedback({ message: "", type: "" }), 3000);
+
+            console.log("Profile saved:", profileData);
+        } catch (error) {
+            console.error("Error saving profile:", error);
+            setFeedback({ message: "Error saving profile. Please try again.", type: "error" });
+            setTimeout(() => setFeedback({ message: "", type: "" }), 3000);
+        }
     };
 
-    // Framer Motion variants for animations
-    const formVariant = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.1 } },
-    };
-
-    const inputVariant = {
-        hidden: { opacity: 0, x: -20 },
-        visible: { opacity: 1, x: 0, transition: { duration: 0.3 } },
-    };
+    // Framer Motion variants
+    const formVariant = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.1 } } };
+    const inputVariant = { hidden: { opacity: 0, x: -20 }, visible: { opacity: 1, x: 0, transition: { duration: 0.3 } } };
 
     return (
         <div className="max-w-4xl mx-auto py-16 px-4 sm:px-6 lg:px-8 font-playfair">
@@ -42,65 +68,28 @@ const BuildProfileForm = () => {
                 Build Your Profile
             </motion.h1>
 
-            <motion.form
-                onSubmit={handleSubmit}
-                className="space-y-8"
-                variants={formVariant}
-                initial="hidden"
-                animate="visible"
-            >
+            <motion.form onSubmit={handleSubmit} className="space-y-8" variants={formVariant} initial="hidden" animate="visible">
                 {/* Name */}
-                <motion.input
-                    type="text"
-                    name="name"
-                    placeholder="Enter your full name..."
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="w-full text-lg border-b border-gray-300 focus:outline-none focus:border-gray-900 pb-2"
-                    required
-                    variants={inputVariant}
-                />
+                <motion.input type="text" name="name" placeholder="Enter your full name..." value={formData.name} onChange={handleChange} className="w-full text-lg border-b border-gray-300 focus:outline-none focus:border-gray-900 pb-2" required variants={inputVariant} />
 
                 {/* Date of Birth */}
-                <motion.input
-                    type="date"
-                    name="dob"
-                    value={formData.dob}
-                    onChange={handleChange}
-                    className="w-full text-lg border-b border-gray-300 focus:outline-none focus:border-gray-900 pb-2"
-                    required
-                    variants={inputVariant}
-                />
+                <motion.input type="date" name="dob" value={formData.dob} onChange={handleChange} className="w-full text-lg border-b border-gray-300 focus:outline-none focus:border-gray-900 pb-2" required variants={inputVariant} />
 
                 {/* Bio */}
-                <motion.textarea
-                    name="bio"
-                    value={formData.bio}
-                    onChange={handleChange}
-                    rows="4"
-                    placeholder="Tell us something about yourself..."
-                    className="w-full text-lg leading-relaxed focus:outline-none focus:border-gray-900 border-b border-gray-300 pb-2 resize-none"
-                    variants={inputVariant}
-                ></motion.textarea>
+                <motion.textarea name="bio" value={formData.bio} onChange={handleChange} rows="4" placeholder="Tell us something about yourself..." className="w-full text-lg leading-relaxed focus:outline-none focus:border-gray-900 border-b border-gray-300 pb-2 resize-none" variants={inputVariant}></motion.textarea>
 
                 {/* Profile Picture */}
-                <motion.input
-                    type="file"
-                    name="profilePic"
-                    accept="image/*"
-                    onChange={handleChange}
-                    className="w-full text-lg border-b border-gray-300 focus:outline-none focus:border-gray-900 pb-2"
-                    variants={inputVariant}
-                />
+                <motion.input type="file" name="profilePic" accept="image/*" onChange={handleChange} className="w-full text-lg border-b border-gray-300 focus:outline-none focus:border-gray-900 pb-2" variants={inputVariant} />
+
+                {/* Feedback */}
+                {feedback.message && (
+                    <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={`font-semibold ${feedback.type === "success" ? "text-green-600" : "text-red-600"}`}>
+                        {feedback.message}
+                    </motion.span>
+                )}
 
                 {/* Submit Button */}
-                <motion.button
-                    type="submit"
-                    whileHover={{ scale: 1.05, backgroundColor: "#1f2937", color: "#fff" }}
-                    whileTap={{ scale: 0.95 }}
-                    className="px-8 py-3 rounded-full text-lg font-semibold border border-gray-900 transition-colors"
-                    variants={inputVariant}
-                >
+                <motion.button type="submit" whileHover={{ scale: 1.05, backgroundColor: "#1f2937", color: "#fff" }} whileTap={{ scale: 0.95 }} className="px-8 py-3 rounded-full text-lg font-semibold border border-gray-900 transition-colors" variants={inputVariant}>
                     Submit Profile
                 </motion.button>
             </motion.form>

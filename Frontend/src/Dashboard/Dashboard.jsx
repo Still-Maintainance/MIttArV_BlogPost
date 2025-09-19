@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { doSignOut } from "../firebase/auth"; // import your logout function
+import { doSignOut } from "../firebase/auth";
+import { database, auth } from "../firebase/firebase";
+import { ref, onValue, remove } from "firebase/database";
 
 // --- Icon Components ---
 const PlusIcon = () => (
@@ -28,36 +30,73 @@ const TrashIcon = () => (
     </svg>
 );
 
-// --- Fake Data ---
-const currentUser = {
-    name: "Priya Sharma",
-    avatarUrl: "https://placehold.co/100x100/FFFFFF/000000?text=PS",
-    bio: "Frontend Developer & Technical Writer, passionate about creating beautiful and functional user experiences.",
-    memberSince: "2025-01-15",
-};
-
-const userPosts = [
-    { id: "post_001", title: "Getting Started with React 19: What You Need to Know", publishDate: "2025-09-18", status: "Published" },
-    { id: "post_003", title: "Mastering State Management with Redux Toolkit", publishDate: "2025-09-12", status: "Published" },
-    { id: "post_005", title: "UI/UX Design Principles for Developers", publishDate: "2025-08-25", status: "Draft" },
-];
-
 // --- Motion Variants ---
 const containerVariants = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } };
 const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } } };
 
 const DashboardPage = () => {
     const navigate = useNavigate();
+    const [currentUser, setCurrentUser] = useState(null);
+    const [userPosts, setUserPosts] = useState([]);
+    const [profile, setProfile] = useState(null);
 
     // Logout handler
     const handleLogout = async () => {
         try {
             await doSignOut();
-            navigate("/"); // redirect to home after logout
+            navigate("/");
         } catch (error) {
             console.error("Logout failed:", error);
         }
     };
+
+    // Delete post
+    const handleDelete = async (postId) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this post?");
+        if (!confirmDelete) return;
+
+        try {
+            const postRef = ref(database, `posts/${postId}`);
+            await remove(postRef);
+            setUserPosts((prev) => prev.filter((post) => post.id !== postId));
+            alert("Post deleted successfully!");
+        } catch (error) {
+            console.error("Error deleting post:", error);
+            alert("Failed to delete post. Try again.");
+        }
+    };
+
+    // Fetch posts and profile of logged-in user
+    useEffect(() => {
+        const user = auth.currentUser;
+        if (!user) {
+            navigate("/"); // redirect if not logged in
+            return;
+        }
+
+        setCurrentUser({ uid: user.uid, email: user.email, name: user.displayName || "Anonymous" });
+
+        // Fetch posts
+        const postsRef = ref(database, "posts");
+        onValue(postsRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const userPostsArray = Object.entries(data)
+                    .filter(([_, post]) => post.authorId === user.uid)
+                    .map(([key, post]) => ({ id: key, ...post }));
+                setUserPosts(userPostsArray);
+            } else {
+                setUserPosts([]);
+            }
+        });
+
+        // Fetch profile
+        const profileRef = ref(database, `profiles/${user.uid}`);
+        onValue(profileRef, (snapshot) => {
+            const profileData = snapshot.val();
+            if (profileData) setProfile(profileData);
+        });
+    }, [navigate]);
 
     return (
         <div className="bg-white min-h-screen font-playfair text-black">
@@ -65,28 +104,28 @@ const DashboardPage = () => {
                 {/* Header */}
                 <motion.header variants={itemVariants} className="mb-10 border-b border-gray-300 pb-4">
                     <h1 className="text-4xl font-bold text-black">Welcome to your Studio</h1>
-                    <p className="text-gray-600 mt-1">Welcome back, {currentUser.name}.</p>
+                    <p className="text-gray-600 mt-1">Welcome back, {profile?.name}.</p>
                 </motion.header>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                     {/* Profile Card */}
                     <motion.aside variants={itemVariants} className="lg:col-span-1 border border-gray-300 p-6">
                         <div className="text-center">
-                            <img src={currentUser.avatarUrl} alt={currentUser.name} className="w-24 h-24 rounded-full mx-auto mb-4 border border-gray-300" />
-                            <h2 className="text-2xl font-bold">{currentUser.name}</h2>
-                            <p className="text-gray-700 mt-2 mb-4">{currentUser.bio}</p>
+                            <img
+                                src={profile?.profilePicUrl || "https://placehold.co/100x100/FFFFFF/000000?text=U"}
+                                alt={currentUser?.name}
+                                className="w-24 h-24 rounded-full mx-auto mb-4 border border-gray-300"
+                            />
+                            <h2 className="text-2xl font-bold">{profile?.name || currentUser?.name}</h2>
+                            <p className="text-gray-700 mt-2 mb-2">{profile?.bio || "Manage your blogs and profile."}</p>
+                            <p className="text-gray-500 text-sm mb-4">DOB: {profile?.dob || "Not set"}</p>
                             <Link to="/edit-profile">
                                 <motion.button className="w-full px-4 py-2 text-md font-medium text-white bg-black rounded-md mb-3" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                                     Edit Profile
                                 </motion.button>
                             </Link>
-                            <motion.button
-                                onClick={handleLogout}
-                                className="w-full px-4 py-2 text-md font-medium text-white bg-red-600 rounded-md"
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                            >
-                                Log Out
+                            <motion.button onClick={handleLogout} className="w-full px-4 py-2 text-md font-medium text-white bg-red-600 rounded-md" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                Log Out 
                             </motion.button>
                         </div>
                     </motion.aside>
@@ -105,31 +144,31 @@ const DashboardPage = () => {
 
                         {/* Posts List */}
                         <motion.div className="space-y-4" initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: 0.1 } } }}>
-                            {userPosts.map((post, index) => (
-                                <motion.div
-                                    key={post.id}
-                                    className={`flex items-center justify-between py-4 ${index !== userPosts.length - 1 ? "border-b border-gray-300" : ""}`}
-                                    variants={itemVariants}
-                                    whileHover={{ scale: 1.01 }}
-                                >
-                                    <div>
-                                        <h3 className="text-lg font-bold">{post.title}</h3>
-                                        <div className="flex items-center text-sm text-gray-600 gap-4 mt-1">
-                                            <span>{post.publishDate}</span>
+                            {userPosts.length === 0 ? (
+                                <p className="text-gray-500">You haven't published any posts yet.</p>
+                            ) : (
+                                userPosts.map((post, index) => (
+                                    <motion.div key={post.id} className={`flex items-center justify-between py-4 ${index !== userPosts.length - 1 ? "border-b border-gray-300" : ""}`} variants={itemVariants} whileHover={{ scale: 1.01 }}>
+                                        <div>
+                                            <h3 className="text-lg font-bold">{post.title}</h3>
+                                            <div className="flex items-center text-sm text-gray-600 gap-4 mt-1">
+                                                <span>{post.date}</span>
+                                                <span>{post.category}</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <Link to={`/edit-post/${post.id}`}>
-                                            <motion.button whileTap={{ scale: 0.9 }} className="p-2 text-gray-700 hover:text-black">
-                                                <EditIcon />
+                                        <div className="flex items-center gap-2">
+                                            <Link to={`/edit-post/${post.id}`}>
+                                                <motion.button whileTap={{ scale: 0.9 }} className="p-2 text-gray-700 hover:text-black">
+                                                    <EditIcon />
+                                                </motion.button>
+                                            </Link>
+                                            <motion.button onClick={() => handleDelete(post.id)} whileTap={{ scale: 0.9 }} className="p-2 text-gray-700 hover:text-black">
+                                                <TrashIcon />
                                             </motion.button>
-                                        </Link>
-                                        <motion.button whileTap={{ scale: 0.9 }} className="p-2 text-gray-700 hover:text-black">
-                                            <TrashIcon />
-                                        </motion.button>
-                                    </div>
-                                </motion.div>
-                            ))}
+                                        </div>
+                                    </motion.div>
+                                ))
+                            )}
                         </motion.div>
                     </motion.main>
                 </div>

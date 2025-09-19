@@ -7,6 +7,7 @@ import DashboardPage from "./Dashboard/DashboardPage";
 import EditPostPage from "./CreateEditPost/EditPostPage";
 import EditProfilePage from "./EditProfile/EditProfilePage";
 import CreatePostPage from "./CreateEditPost/CreatePostPage";
+import BlogDetailPage from "./PostPage/PostDetailpage";
 import { useAuth } from "./contexts/authContext";
 
 import './App.css';
@@ -56,6 +57,14 @@ function App() {
           }
         />
         <Route
+          path="/posts/:id"
+          element={
+            <PrivateRoute>
+              <BlogDetailPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
           path="/dashboard"
           element={
             <PrivateRoute>
@@ -64,7 +73,7 @@ function App() {
           }
         />
         <Route
-          path="/edit-post"
+          path="/edit-post/:id"
           element={
             <PrivateRoute>
               <EditPostPage />

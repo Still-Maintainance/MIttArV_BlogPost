@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import InfiniteScroll from "react-infinite-scroll-component";
-import axios from "axios";
+import { database } from "../firebase/firebase";
+import { ref, onValue } from "firebase/database";
 
 // Framer Motion Variants
 const slideFromLeft = {
@@ -18,42 +19,42 @@ const containerVariant = {
 
 const BlogPage = () => {
     const [search, setSearch] = useState("");
-    const [allBlogs, setAllBlogs] = useState([]);       // Full blogs from API
-    const [items, setItems] = useState([]);            // Blogs displayed on screen
-    const [filteredBlogs, setFilteredBlogs] = useState([]); // Filtered by search
+    const [allBlogs, setAllBlogs] = useState([]);
+    const [items, setItems] = useState([]);
+    const [filteredBlogs, setFilteredBlogs] = useState([]);
     const [hasMore, setHasMore] = useState(true);
     const [suggestions, setSuggestions] = useState([]);
 
-    // Fetch blogs from API
+    // Fetch blogs from Firebase
     useEffect(() => {
-        const fetchBlogs = async () => {
-            try {
-                const response = await axios.get("http://localhost:5000/api/blogs"); // Your API endpoint
-                setAllBlogs(response.data);
-                setFilteredBlogs(response.data);
-                setItems(response.data.slice(0, 6));
-                setHasMore(response.data.length > 6);
-            } catch (error) {
-                console.error("Error fetching blogs:", error);
+        const postsRef = ref(database, "posts");
+        onValue(postsRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const blogsArray = Object.entries(data).map(([id, blog]) => ({
+                    id,
+                    ...blog,
+                }));
+                setAllBlogs(blogsArray);
+                setFilteredBlogs(blogsArray);
+                setItems(blogsArray.slice(0, 6));
+                setHasMore(blogsArray.length > 6);
             }
-        };
-
-        fetchBlogs();
+        });
     }, []);
 
     // Filter blogs on search change
     useEffect(() => {
         const filtered = allBlogs.filter(
             (blog) =>
-                blog.title.toLowerCase().includes(search.toLowerCase()) ||
-                blog.category.toLowerCase().includes(search.toLowerCase())
+                blog.title?.toLowerCase().includes(search.toLowerCase()) ||
+                blog.category?.toLowerCase().includes(search.toLowerCase())
         );
 
         setFilteredBlogs(filtered);
         setItems(filtered.slice(0, 6));
         setHasMore(filtered.length > 6);
 
-        // Autocomplete suggestions
         if (search.length > 0) {
             const suggestionList = filtered
                 .map((b) => [b.title, b.category])
@@ -125,7 +126,7 @@ const BlogPage = () => {
                     viewport={{ once: true, amount: 0.3 }}
                 >
                     <h2 className="text-5xl sm:text-6xl font-bold text-gray-900">
-                        From the Blog
+                        Blogs For You
                     </h2>
                 </motion.div>
 
@@ -149,37 +150,32 @@ const BlogPage = () => {
                         animate="visible"
                     >
                         {items.map((blog) => (
-                            <Link to={`/post/${blog.id}`} key={blog.id}>
+                            <Link to={`/posts/${blog.id}`} key={blog.id}>
                                 <motion.div
-                                    className="bg-white rounded-lg shadow-md overflow-hidden h-full flex flex-col group"
+                                    className="bg-white rounded-lg shadow-md p-6 flex flex-col h-full group"
                                     variants={slideFromLeft}
                                     whileHover={{ y: -5 }}
                                     transition={{ duration: 0.3 }}
                                 >
-                                    <div className="overflow-hidden">
-                                        <img
-                                            src={blog.image}
-                                            alt={blog.title}
-                                            className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-300"
-                                        />
+                                    {/* Title */}
+                                    <h3 className="text-2xl font-bold text-gray-900 leading-tight mb-3">
+                                        {blog.title}
+                                    </h3>
+
+                                    {/* Short Description */}
+                                    <p className="text-gray-700 leading-relaxed mb-4">
+                                        {blog.content?.slice(0, 200)}...
+                                    </p>
+
+                                    {/* Date & Category side by side */}
+                                    <div className="flex justify-between items-center text-sm text-gray-500 mt-auto">
+                                        <span>{blog.date}</span>
+                                        <span className="font-medium text-blue-600">{blog.category}</span>
                                     </div>
-                                    <div className="p-6 flex-grow flex flex-col">
-                                        <div className="flex-grow">
-                                            <div className="flex items-center space-x-2 text-sm text-gray-500 mb-3">
-                                                <span>{blog.date}</span>
-                                                <span>•</span>
-                                                <span>{blog.category}</span>
-                                            </div>
-                                            <h3 className="text-2xl font-bold text-gray-900 leading-tight mb-3">
-                                                {blog.title}
-                                            </h3>
-                                            <p className="text-gray-700 leading-relaxed mb-4">
-                                                {blog.content.slice(0, 100)}...
-                                            </p>
-                                        </div>
-                                        <div className="flex items-center mt-4 pt-4 border-t border-gray-100">
-                                            <span className="font-semibold text-gray-800">{blog.author}</span>
-                                        </div>
+
+                                    {/* Author */}
+                                    <div className="flex items-center mt-2 pt-2 border-t border-gray-100">
+                                        <span className="font-semibold text-gray-800">{blog.authorName}</span>
                                     </div>
                                 </motion.div>
                             </Link>
