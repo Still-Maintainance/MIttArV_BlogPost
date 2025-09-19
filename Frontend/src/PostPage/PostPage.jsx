@@ -27,31 +27,8 @@ function PostPage() {
     return (
         <>
             <Navbar />
-            <div className="flex flex-col justify-center items-center w-full mt-5 px-4">
-                <motion.div
-                    className="flex items-center border border-black rounded-md px-3 py-2 bg-white shadow-sm w-full max-w-md"
-                    initial={{ opacity: 0, y: -50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                        opacity: { duration: 0.3, ease: "easeOut" }, // fades in quicker
-                        y: { duration: 0.7, ease: "easeOut" }          // descends slowly
-                    }}
-                    whileHover={{ scale: 1.05 }}
-                    whileFocus={{ scale: 1.05 }}
-                >
-                    <SearchIcon />
-                    <input
-                        type="text"
-                        placeholder="Search"
-                        className="ml-2 flex-1 px-2 py-1 text-sm bg-transparent outline-none placeholder-gray-500"
-                    />
-                </motion.div>
-
-                <Post />
-
-
-            </div>
-            <Footer/>
+            <Post />
+            <Footer />
         </>
     )
 }

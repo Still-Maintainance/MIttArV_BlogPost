@@ -90,7 +90,7 @@ const DashboardPage = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
 
                     {/* Profile Card */}
-                    <motion.aside variants={itemVariants} className="lg:col-span-1 border border-gray-300 p-6 rounded-lg">
+                    <motion.aside variants={itemVariants} className="lg:col-span-1 border border-gray-300 p-6 ">
                         <div className="text-center">
                             <img src={currentUser.avatarUrl} alt={currentUser.name} className="w-24 h-24 rounded-full mx-auto mb-4 border border-gray-300" />
                             <h2 className="text-2xl font-bold">{currentUser.name}</h2>
@@ -108,12 +108,12 @@ const DashboardPage = () => {
                     </motion.aside>
 
                     {/* Posts Section */}
-                    <motion.main variants={itemVariants} className="lg:col-span-2 border border-gray-300 p-6 rounded-lg">
+                    <motion.main variants={itemVariants} className="lg:col-span-2 border border-gray-300 p-6 ">
                         <div className="flex justify-between items-center mb-6 border-b border-gray-300 pb-4">
                             <h2 className="text-2xl font-bold text-black">My Articles</h2>
                             <Link to="/create-post">
                                 <motion.button
-                                    className="flex items-center gap-2 px-4 py-2 text-md font-medium text-white bg-black "
+                                    className="flex items-center gap-2 px-2 py-2 text-md font-medium text-white bg-black "
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                 >
@@ -141,9 +141,7 @@ const DashboardPage = () => {
                                         <h3 className="text-lg font-bold">{post.title}</h3>
                                         <div className="flex items-center text-sm text-gray-600 gap-4 mt-1">
                                             <span>{post.publishDate}</span>
-                                            <span className="px-2 py-0.5 rounded-full text-xs font-semibold border border-gray-400">
-                                                {post.status}
-                                            </span>
+
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">

@@ -23,15 +23,6 @@ function App() {
         <Route path="/edit-profile" element={< EditProfilePage />} />
         <Route path="/create-post" element={< CreatePostPage />} />
 
-
-
-
-
-
-
-
-
-
       </Routes>
     </Router>
   );

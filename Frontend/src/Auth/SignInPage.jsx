@@ -32,7 +32,7 @@ const SignInPage = () => {
         <>
             <Navbar />
 
-            <div className="min-h-screen font-Roboto bg-white flex items-center justify-center py-16">
+            <div className="min-h-screen  font-Roboto bg-white flex items-center justify-center py-16">
                 <div className="w-full max-w-md p-6 sm:p-12">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
