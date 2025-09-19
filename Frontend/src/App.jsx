@@ -8,6 +8,7 @@ import EditPostPage from "./CreateEditPost/EditPostPage";
 import EditProfilePage from "./EditProfile/EditProfilePage";
 import CreatePostPage from "./CreateEditPost/CreatePostPage";
 import BlogDetailPage from "./PostPage/PostDetailpage";
+import ProfilePage from "./EditProfile/ProfilePage"; // ✅ Import ProfilePage
 import { useAuth } from "./contexts/authContext";
 
 import './App.css';
@@ -93,6 +94,16 @@ function App() {
           element={
             <PrivateRoute>
               <CreatePostPage />
+            </PrivateRoute>
+          }
+        />
+
+        {/* ✅ New Profile Page */}
+        <Route
+          path="/profile/:userId"
+          element={
+            <PrivateRoute>
+              <ProfilePage />
             </PrivateRoute>
           }
         />
