@@ -6,7 +6,7 @@
     "date": "2025-09-10",
     "category": "Lifestyle",
     "content": "Minimalist living isn't just about owning fewer things. It's about finding freedom, clarity, and peace in simplicity. In this blog, we explore practical tips to declutter your life, create a mindful home, and focus on what truly matters.",
-    "image": "https://example.com/images/minimalism.jpg",
+    "image": "https://via.placeholder.com/600x400?text=Minimalism",
     "likes": 340
   },
   {
@@ -16,7 +16,7 @@
     "date": "2025-09-12",
     "category": "Technology",
     "content": "React Hooks have transformed the way we write React applications. In this article, we break down useState, useEffect, and custom hooks with examples that you can start using today to build cleaner and more efficient React apps.",
-    "image": "https://example.com/images/react-hooks.jpg",
+    "image": "https://via.placeholder.com/600x400?text=React+Hooks",
     "likes": 420
   },
   {
@@ -26,7 +26,7 @@
     "date": "2025-09-14",
     "category": "Food",
     "content": "Breakfast is the most important meal of the day. This blog covers 10 delicious, easy-to-make, and healthy breakfast options that give you the energy boost you need for the day ahead.",
-    "image": "https://example.com/images/breakfast.jpg",
+    "image": "https://via.placeholder.com/600x400?text=Breakfast",
     "likes": 295
   },
   {
@@ -36,7 +36,7 @@
     "date": "2025-09-15",
     "category": "Travel",
     "content": "Solo travel can be one of the most rewarding experiences of your life. We list the top 5 destinations perfect for solo travelers in 2025, including safety tips and budget-friendly hacks.",
-    "image": "https://example.com/images/solo-travel.jpg",
+    "image": "https://via.placeholder.com/600x400?text=Solo+Travel",
     "likes": 380
   },
   {
@@ -46,7 +46,57 @@
     "date": "2025-09-17",
     "category": "Health",
     "content": "Meditation helps reduce stress and improve focus. In this beginner's guide, we explain simple meditation techniques, tips for staying consistent, and how to integrate mindfulness into your daily routine.",
-    "image": "https://example.com/images/meditation.jpg",
+    "image": "https://via.placeholder.com/600x400?text=Meditation",
     "likes": 415
+  },
+  {
+    "id": 6,
+    "title": "10 Tips for Healthy Eating",
+    "author": "Liam Smith",
+    "date": "2025-09-18",
+    "category": "Health",
+    "content": "Eating healthy doesn't have to be complicated. We share 10 simple tips to make your diet nutritious and balanced without giving up your favorite foods.",
+    "image": "https://via.placeholder.com/600x400?text=Healthy+Eating",
+    "likes": 320
+  },
+  {
+    "id": 7,
+    "title": "Mastering JavaScript in 30 Days",
+    "author": "Ethan Johnson",
+    "date": "2025-09-19",
+    "category": "Programming",
+    "content": "This step-by-step guide helps you learn JavaScript from basics to advanced concepts with practical exercises and projects.",
+    "image": "https://via.placeholder.com/600x400?text=JavaScript",
+    "likes": 512
+  },
+  {
+    "id": 8,
+    "title": "Top 5 Travel Destinations for 2025",
+    "author": "Ava Martinez",
+    "date": "2025-09-19",
+    "category": "Travel",
+    "content": "Looking for your next adventure? Check out the top 5 must-visit destinations for 2025, from tropical beaches to cultural hotspots.",
+    "image": "https://via.placeholder.com/600x400?text=Travel+Destinations",
+    "likes": 289
+  },
+  {
+    "id": 9,
+    "title": "The Future of Artificial Intelligence",
+    "author": "Noah Wilson",
+    "date": "2025-09-20",
+    "category": "Technology",
+    "content": "AI is shaping industries across the globe. Here's what experts predict about AI's role in automation, healthcare, and beyond.",
+    "image": "https://via.placeholder.com/600x400?text=AI+Future",
+    "likes": 643
+  },
+  {
+    "id": 10,
+    "title": "How to Start a Side Hustle in 2025",
+    "author": "Isabella Thompson",
+    "date": "2025-09-21",
+    "category": "Business",
+    "content": "Thinking of starting a side hustle? We share practical steps, profitable ideas, and tips to manage your time efficiently.",
+    "image": "https://via.placeholder.com/600x400?text=Side+Hustle",
+    "likes": 402
   }
 ]
