@@ -2,7 +2,6 @@
 
 Author -- A.Sri Vidya Sagar
 
-
 Blog App Project
 Project Overview
 
@@ -49,12 +48,13 @@ Only authorized users can create, edit, or delete posts.
 Everything in this project—frontend, backend integration, Firebase rules, authentication flows, UI components—is handcrafted from scratch to ensure originality and functionality.
 
 Setup Instructions
+
 1. Clone the repository
-git clone <your-repo-url>
-cd <repo-folder>
+   git clone <your-repo-url>
+   cd <repo-folder>
 
 2. Install dependencies
-npm install
+   npm install
 
 3. Firebase Setup
 
@@ -66,21 +66,19 @@ Enable Realtime Database and Authentication.
 Add your Firebase configuration to src/firebase/firebase.js:
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT.firebaseio.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+apiKey: "YOUR_API_KEY",
+authDomain: "YOUR_PROJECT.firebaseapp.com",
+databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+projectId: "YOUR_PROJECT_ID",
+storageBucket: "YOUR_PROJECT.appspot.com",
+messagingSenderId: "YOUR_SENDER_ID",
+appId: "YOUR_APP_ID"
 };
-
 
 Add authorized domains in Firebase Authentication (e.g., localhost for local testing and your Vercel domain for production).
 
 4. Run Locally
-npm start
-
+   npm start
 
 The app will be available at http://localhost:3000
 .
@@ -94,9 +92,9 @@ Set environment variables if needed.
 Ensure React Router works with this rewrite configuration in vercel.json:
 
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
+"rewrites": [
+{ "source": "/(.*)", "destination": "/index.html" }
+]
 }
 
 AI Tools & Prompting Techniques
