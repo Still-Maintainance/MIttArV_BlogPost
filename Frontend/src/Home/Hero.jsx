@@ -49,7 +49,7 @@ function Hero() {
                 </p>
 
                 <Link
-                to="/signup"
+                to="/sign-up"
                 >
                     <button className="px-3 underline decoration-3 py-3 text-xl font-medium">
                         Get Started

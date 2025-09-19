@@ -52,7 +52,7 @@ const RandomWord = () => {
             transition={{ duration: 0.6, ease: "easeOut" }} 
         >
             <div className="flex justify-center mt-6">
-                <p className="font-playfair font-semibold text-5xl">Random Word</p>
+                <p className="font-playfair font-semibold text-5xl">Improve Your Vocab</p>
             </div>
             <div className="flex  font-playfair justify-center mt-8 mb-24">
                 <div className="bg-white rounded-xl p-8 max-w-3xl w-full border border-gray-200 flex flex-col md:flex-row gap-6">

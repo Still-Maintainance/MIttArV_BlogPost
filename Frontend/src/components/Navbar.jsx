@@ -89,7 +89,7 @@ function Navbar() {
                 {/* Login Link */}
                 <motion.div variants={navItemVariants}>
                     <Link
-                        to="/signin"
+                        to="/sign-in"
                         className="text-lg font-semibold hover:text-xl hover:text-black active:text-md transition-all duration-200 inline-block"
                     >
                         Sign In
@@ -99,7 +99,7 @@ function Navbar() {
 
                 {/* Sign Up Button (Primary Call-to-Action) */}
                 <motion.div variants={navItemVariants}>
-                    <Link to="/signup">
+                    <Link to="/sign-up">
                         <motion.button
                             className=" py-1.5 text-lg font-semibold text-black "
                             whileHover={{ scale: 1.05 }}
