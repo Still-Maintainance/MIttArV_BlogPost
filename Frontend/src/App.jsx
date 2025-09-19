@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import HomePage from "./Home/HomePage";
 import SigninPage from "./Auth/SignInPage";
 import SignupPage from "./Auth/SignUp";
@@ -7,22 +7,86 @@ import DashboardPage from "./Dashboard/DashboardPage";
 import EditPostPage from "./CreateEditPost/EditPostPage";
 import EditProfilePage from "./EditProfile/EditProfilePage";
 import CreatePostPage from "./CreateEditPost/CreatePostPage";
+import { useAuth } from "./contexts/authContext";
 
 import './App.css';
+
+// Private route wrapper
+const PrivateRoute = ({ children }) => {
+  const { currentUser } = useAuth();
+  return currentUser ? children : <Navigate to="/sign-in" />;
+};
+
+// Public route wrapper for auth pages
+const PublicRoute = ({ children }) => {
+  const { currentUser } = useAuth();
+  return currentUser ? <Navigate to="/posts" /> : children;
+};
 
 function App() {
   return (
     <Router>
       <Routes>
+        {/* Public Pages */}
         <Route path="/" element={<HomePage />} />
-        <Route path="/sign-in" element={<SigninPage />} />
-        <Route path="/sign-up" element={<SignupPage />} />
-        <Route path="/posts" element={<PostPage />} />
-        <Route path="/dashboard" element={< DashboardPage />} />
-        <Route path="/edit-post" element={< EditPostPage />} />
-        <Route path="/edit-profile" element={< EditProfilePage />} />
-        <Route path="/create-post" element={< CreatePostPage />} />
+        <Route
+          path="/sign-in"
+          element={
+            <PublicRoute>
+              <SigninPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/sign-up"
+          element={
+            <PublicRoute>
+              <SignupPage />
+            </PublicRoute>
+          }
+        />
 
+        {/* Protected Pages */}
+        <Route
+          path="/posts"
+          element={
+            <PrivateRoute>
+              <PostPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <DashboardPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/edit-post"
+          element={
+            <PrivateRoute>
+              <EditPostPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/edit-profile"
+          element={
+            <PrivateRoute>
+              <EditProfilePage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/create-post"
+          element={
+            <PrivateRoute>
+              <CreatePostPage />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </Router>
   );

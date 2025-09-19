@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
-import { useNavigate, Link } from "react-router-dom"; // Added Link import
+import { useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { auth, googleProvider } from "../firebase/firebase";
+import { signInWithEmailAndPassword, signInWithPopup, sendPasswordResetEmail } from "firebase/auth";
 
 const SignInPage = () => {
     const navigate = useNavigate();
@@ -17,22 +20,61 @@ const SignInPage = () => {
         setFormData((prev) => ({ ...prev, [id]: value }));
     };
 
-    const handleSubmit = (e) => {
+    // Sign in with email/password
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Login Data:", formData);
-
-        // Simulate login
-        setTimeout(() => {
-            alert("Login successful!");
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password);
+            console.log("User signed in:", userCredential.user);
             navigate("/posts");
-        }, 500);
+        } catch (error) {
+            console.error("Firebase login error:", error);
+            if (error.code === "auth/user-not-found") {
+                alert("No user found with this email.");
+            } else if (error.code === "auth/wrong-password") {
+                alert("Incorrect password.");
+            } else if (error.code === "auth/invalid-email") {
+                alert("Invalid email format.");
+            } else {
+                alert(error.message);
+            }
+        }
+    };
+
+    // Google login
+    const handleGoogleLogin = async () => {
+        try {
+            await signInWithPopup(auth, googleProvider);
+            navigate("/posts");
+        } catch (error) {
+            console.error("Google login error:", error);
+            alert(error.message);
+        }
+    };
+
+    // Forgot password
+    const handleForgotPassword = async () => {
+        if (!formData.email) {
+            alert("Please enter your email to reset password.");
+            return;
+        }
+        try {
+            await sendPasswordResetEmail(auth, formData.email);
+            alert("Password reset email sent. Check your inbox.");
+        } catch (error) {
+            console.error("Password reset error:", error);
+            if (error.code === "auth/user-not-found") {
+                alert("No account found with this email.");
+            } else {
+                alert(error.message);
+            }
+        }
     };
 
     return (
         <>
             <Navbar />
-
-            <div className="min-h-screen  font-Roboto bg-white flex items-center justify-center py-16">
+            <div className="min-h-screen font-Roboto bg-white flex items-center justify-center py-16">
                 <div className="w-full max-w-md p-6 sm:p-12">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
@@ -49,7 +91,7 @@ const SignInPage = () => {
                         <form onSubmit={handleSubmit}>
                             {/* Email Input */}
                             <div className="mb-4">
-                                <label className="block text-gray-700 font-semibold mb-2" htmlFor="email">
+                                <label htmlFor="email" className="block text-gray-700 font-semibold mb-2">
                                     Email Address
                                 </label>
                                 <input
@@ -66,12 +108,16 @@ const SignInPage = () => {
                             {/* Password Input */}
                             <div className="mb-6">
                                 <div className="flex justify-between items-center mb-2">
-                                    <label className="block text-gray-700 font-semibold" htmlFor="password">
+                                    <label htmlFor="password" className="block text-gray-700 font-semibold">
                                         Password
                                     </label>
-                                    <Link to="/forgot-password" className="text-sm text-indigo-600 hover:underline">
+                                    <button
+                                        type="button"
+                                        onClick={handleForgotPassword}
+                                        className="text-sm text-indigo-600 hover:underline"
+                                    >
                                         Forgot Password?
-                                    </Link>
+                                    </button>
                                 </div>
                                 <input
                                     type="password"
@@ -84,7 +130,6 @@ const SignInPage = () => {
                                 />
                             </div>
 
-                            {/* Submit Button */}
                             <button
                                 type="submit"
                                 className="w-full py-3 bg-gray-900 text-white text-lg font-medium rounded-lg hover:bg-gray-700 transition-colors duration-300 shadow-md"
@@ -100,39 +145,24 @@ const SignInPage = () => {
                             <div className="flex-grow border-t border-gray-300"></div>
                         </div>
 
-                        {/* Social Login Button */}
-                        <div className="flex flex-col sm:flex-row gap-4">
-                            <button className="w-full flex items-center justify-center py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                                {/* Google Icon */}
-                                <svg className="w-6 h-6 mr-3" viewBox="0 0 48 48">
-                                    <path
-                                        fill="#FFC107"
-                                        d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"
-                                    />
-                                    <path
-                                        fill="#FF3D00"
-                                        d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691z"
-                                    />
-                                    <path
-                                        fill="#4CAF50"
-                                        d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.223 0-9.657-3.356-11.303-7.918l-6.522 5.025C9.505 39.556 16.227 44 24 44z"
-                                    />
-                                    <path
-                                        fill="#1976D2"
-                                        d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l6.19 5.238C42.021 35.637 44 30.039 44 24c0-1.341-.138-2.65-.389-3.917z"
-                                    />
-                                </svg>
-                                Sign in with Google
-                            </button>
-                        </div>
+                        {/* Google Login */}
+                        <button
+                            onClick={handleGoogleLogin}
+                            className="w-full flex items-center justify-center py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                        >
+                            <svg className="w-6 h-6 mr-3" viewBox="0 0 48 48">
+                                <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z" />
+                                <path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691z" />
+                                <path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.223 0-9.657-3.356-11.303-7.918l-6.522 5.025C9.505 39.556 16.227 44 24 44z" />
+                                <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571l6.19 5.238C42.021 35.637 44 30.039 44 24c0-1.341-.138-2.65-.389-3.917z" />
+                            </svg>
+                            Sign in with Google
+                        </button>
 
                         {/* Sign Up Link */}
                         <p className="mt-8 text-center text-gray-600">
                             Don't have an account?{" "}
-                            <Link
-                                to="/sign-up"
-                                className="underline font-semibold text-indigo-600 hover:underline"
-                            >
+                            <Link to="/sign-up" className="underline font-semibold text-indigo-600 hover:underline">
                                 Sign Up
                             </Link>
                         </p>
