@@ -1,9 +1,8 @@
-import Navbar from "./Navbar";
+import Navbar from "../components/Navbar";
 import Hero from "./Hero";
 import FeaturedPosts from "./FeaturedPosts";
 import Wod from "./RandomWord";
-import Footer from "./Footer";
-
+import Footer from "../components/Footer";
 function HomePage() {
     return (
         <>
