@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SIH Project Report | CollabGrow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body, h1, h2, h3, h4, h5, h6, p, li, a, span, button {
+        font-family: 'Playfair Display', serif;
+      }
+    </style>
+  </head>
+  <body class="antialiased">
+
+    <!-- Header -->
+    <header class="bg-blue-900 text-white py-10">
+      <div class="container mx-auto text-center px-6">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+          Smart India Hackathon 2025
+        </h1>
+        <p class="text-xl md:text-2xl mt-4 tracking-tight">
+          Project Report: CollabGrow
+        </p>
+      </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+      <!-- Section Heading -->
+      <h2 class="text-4xl md:text-5xl font-bold text-center mb-12">
+        Understanding the Problem Statement
+      </h2>
+
+      <!-- Problem Details -->
+      <section id="problem-details" class="space-y-16">
+        <div class="flex flex-col md:flex-row items-center gap-8">
+          <img
+            src="https://placehold.co/400x300/3730a3/e0e7ff?text=Disease+Spread"
+            alt="Disease Spread"
+            class="rounded-xl border md:w-1/2 mx-auto"
+          />
+          <div class="md:w-1/2">
+            <h3 class="text-3xl md:text-4xl font-bold mb-4">
+              1. Rapid Disease Spread & Public Health Risk
+            </h3>
+            <p class="text-lg font-light text-black">
+              Kerala hosts millions of interstate migrant workers who live and work in high-density settings. Frequent movement between jobs, districts, and temporary settlements makes it extremely difficult to track infectious diseases like TB, vector-borne diseases, or viral outbreaks. Fragmented or absent health records delay case detection, hinder contact tracing, and increase the risk of disease spreading to both migrants and local communities.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row-reverse items-center gap-8">
+          <img
+            src="https://placehold.co/400x300/1e40af/dbeafe?text=Migrants+Healthcare"
+            alt="Migrants Healthcare"
+            class="rounded-xl border md:w-1/2 mx-auto"
+          />
+          <div class="md:w-1/2">
+            <h3 class="text-3xl md:text-4xl font-bold mb-4">
+              2. Difficulty in Finding and Treating Migrants
+            </h3>
+            <p class="text-lg font-thin text-black">
+              Migrants often have scattered health data—paper slips, private clinics, employer lists, or nothing at all. When they relocate, doctors have no access to their medical history, leading to incomplete treatment, missed vaccinations, and duplication of tests. Language barriers, financial constraints, and temporary living conditions further prevent timely healthcare, making both detection and cure of infectious diseases harder, increasing public health vulnerability.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Project Objectives -->
+      <section id="project-objectives" class="mt-20 space-y-12">
+        <h2 class="text-3xl md:text-4xl font-bold text-center">
+          Project Objectives
+        </h2>
+
+        <div class="flex flex-col md:flex-row items-center gap-8">
+          <img
+            src="https://placehold.co/400x300/1e40af/dbeafe?text=Project+Goals"
+            alt="Project Goals"
+            class="rounded-xl border md:w-1/2 mx-auto"
+          />
+          <div class="md:w-1/2 space-y-4">
+            <div>
+              <h3 class="text-xl font-bold">Solution</h3>
+              <p class="text-lg">
+                Implement a <strong>Digital Health Record System</strong> for migrant workers with a <strong>Universal Digital Health ID (UDHI)</strong>. Centralizes medical history including past illnesses, treatments, vaccinations, and lab reports. Authorized doctors access verified records instantly.
+              </p>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold">Uniqueness</h3>
+              <p class="text-lg">
+                Secure authentication ensures only authorized personnel can view sensitive health data. Each worker has individual health tracking; government dashboards provide analytics to monitor outbreaks and allocate resources.
+              </p>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold">Problem Solved</h3>
+              <p class="text-lg">
+                Migrant health records are often scattered or missing. Consolidates records enabling prompt identification of infectious or high-risk conditions, reducing public health risks.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Technologies Used -->
+      <section id="technologies" class="mt-20 space-y-12">
+        <h2 class="text-3xl md:text-4xl font-bold text-center">Technologies Used</h2>
+
+        <div class="flex flex-col md:flex-row items-center gap-8">
+          <img
+            src="https://placehold.co/400x300/4338ca/c7d2fe?text=Tech+Architecture"
+            alt="Technology Architecture"
+            class="rounded-xl border md:w-1/2 mx-auto"
+          />
+          <div class="md:w-1/2 space-y-4 text-lg">
+            <p><strong>Frontend:</strong> Next.js with TypeScript and Tailwind CSS for a responsive, modern UI.</p>
+            <p><strong>Backend:</strong> Node.js with Express.js and Firebase APIs for server logic and real-time data.</p>
+            <p><strong>Security:</strong> JWT Authentication & Authorization for secure access.</p>
+            <p><strong>App:</strong> Lightweight PWA for offline access and mobile performance.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Impact & Benefits -->
+      <section id="impact-benefits" class="mt-20 space-y-12">
+        <h2 class="text-3xl md:text-4xl font-bold text-center">Potential Impact & Benefits</h2>
+
+        <div class="flex flex-col md:flex-row items-start gap-8">
+          <img
+            src="https://placehold.co/600x400/1e40af/dbeafe?text=Impact+Benefits"
+            alt="Impact Benefits"
+            class="rounded-xl border md:w-1/2 mx-auto"
+          />
+          <div class="md:w-1/2 space-y-6">
+            <div>
+              <h3 class="text-2xl font-bold">Potential Impact</h3>
+              <ul class="list-disc list-inside text-lg space-y-2">
+                <li>Empowers migrant workers with reliable digital health records.</li>
+                <li>Doctors access full medical histories instantly.</li>
+                <li>Real-time outbreak alerts help control diseases quickly.</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 class="text-2xl font-bold mt-4">Social Benefits</h3>
+              <ul class="list-disc list-inside text-lg space-y-2">
+                <li>Equitable healthcare access for migrants.</li>
+                <li>Supports multilingual onboarding.</li>
+                <li>Maintains strict data privacy and security.</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 class="text-2xl font-bold mt-4">Environmental Benefits</h3>
+              <ul class="list-disc list-inside text-lg space-y-2">
+                <li>Reduces paper usage and administrative load.</li>
+                <li>Minimizes physical documentation and travel.</li>
+                <li>Promotes sustainable health management practices.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black py-10">
+      <div class="container mx-auto text-center px-6">
+        <p class="text-white">&copy; 2025 CollabGrow. All Rights Reserved.</p>
+      </div>
+    </footer>
+
+  </body>
+</html>

@@ -1,30 +1,29 @@
-// firebase.js
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getDatabase } from "firebase/database";   // ✅ Added Realtime DB
-import { getStorage } from "firebase/storage";     // ✅ Added Storage
+import { getDatabase } from "firebase/database";
+import { getStorage } from "firebase/storage";
 
-// Your Firebase web app config
+// Configuration is loaded from environment variables using Vite's import.meta.env
+// Note: All client-side env vars must be prefixed with VITE_ in the .env file.
 const firebaseConfig = {
-    apiKey: "AIzaSyBslIig3owMogRgtDTvd6W-MBi9lm1dU7A",
-    authDomain: "blogpost-7f4fa.firebaseapp.com",
-    databaseURL: "https://blogpost-7f4fa-default-rtdb.asia-southeast1.firebasedatabase.app", // ✅ Updated
-    projectId: "blogpost-7f4fa",
-    storageBucket: "blogpost-7f4fa.appspot.com",
-    messagingSenderId: "458105459499",
-    appId: "1:458105459499:web:50865fd820354a9ad9eb6e",
-    measurementId: "G-V5W7W3PT14",
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
+// Initialize Firebase App
 const app = initializeApp(firebaseConfig);
 
-// Existing Auth setup (unchanged)
+// Initialize services (Auth, Google Provider, Realtime Database, Storage)
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
-
-// ✅ New: Realtime Database & Storage
 const database = getDatabase(app);
 const storage = getStorage(app);
 
+// Export necessary Firebase objects for use throughout your application
 export { app, auth, googleProvider, database, storage };
