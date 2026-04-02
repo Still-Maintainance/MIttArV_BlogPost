@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 
 const FeaturedPostsFirebase = () => {
     const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const cardVariant = {
         hidden: { opacity: 0, y: 50 },
@@ -19,23 +20,42 @@ const FeaturedPostsFirebase = () => {
 
     useEffect(() => {
         const postsRef = ref(database, "posts");
-        onValue(postsRef, (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                const allBlogs = Object.entries(data).map(([id, blog]) => ({
-                    id,
-                    ...blog,
-                }));
+        
+        const unsubscribe = onValue(
+            postsRef,
+            (snapshot) => {
+                const data = snapshot.val();
+                console.log("Featured Posts Data:", data); // Debug log
+                
+                if (data) {
+                    const allBlogs = Object.entries(data).map(([id, blog]) => ({
+                        id,
+                        ...blog,
+                    }));
 
-                const shuffled = [...allBlogs];
-                for (let i = shuffled.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                    const shuffled = [...allBlogs];
+                    for (let i = shuffled.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                    }
+
+                    const selectedPosts = shuffled.slice(0, Math.min(3, shuffled.length));
+                    console.log("Setting posts:", selectedPosts); // Debug log
+                    setPosts(selectedPosts);
+                } else {
+                    console.log("No posts found in database");
+                    setPosts([]);
                 }
-
-                setPosts(shuffled.slice(0, Math.min(3, shuffled.length)));
+                setLoading(false);
+            },
+            (error) => {
+                console.error("Error fetching posts:", error);
+                setLoading(false);
             }
-        });
+        );
+
+        // Cleanup: unsubscribe from listener when component unmounts
+        return () => unsubscribe();
     }, []);
 
     return (
@@ -58,40 +78,50 @@ const FeaturedPostsFirebase = () => {
 
                 {/* Posts Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {posts.map((post, index) => (
-                        <motion.div
-                            key={post.id}
-                            className="bg-white rounded-lg shadow-md overflow-hidden"
-                            variants={cardVariant}
-                            initial="hidden"
-                            animate="visible"
-                            transition={{ delay: index * 0.1 }}
-                        >
-                            <Link to={`/posts/${post.id}`}>
-                                {post.image && (
-                                    <img
-                                        src={post.image}
-                                        alt={post.title}
-                                        className="w-full h-48 object-cover"
-                                    />
-                                )}
-                                <div className="p-6">
-                                    <span className="text-sm font-semibold text-indigo-600">
-                                        {post.category}
-                                    </span>
-                                    <h3 className="text-xl font-bold text-gray-900 mt-2 mb-2">
-                                        {post.title}
-                                    </h3>
-                                    <p className="text-gray-700 leading-relaxed mb-4">
-                                        {post.content?.slice(0, 300)}...
-                                    </p>
-                                    <span className="font-semibold text-gray-900 hover:text-indigo-600 transition-colors">
-                                        Read More &rarr;
-                                    </span>
-                                </div>
-                            </Link>
-                        </motion.div>
-                    ))}
+                    {loading ? (
+                        <div className="col-span-full text-center py-16">
+                            <p className="text-lg text-gray-600">Loading featured articles...</p>
+                        </div>
+                    ) : posts.length > 0 ? (
+                        posts.map((post, index) => (
+                            <motion.div
+                                key={post.id}
+                                className="bg-white rounded-lg shadow-md overflow-hidden"
+                                variants={cardVariant}
+                                initial="hidden"
+                                animate="visible"
+                                transition={{ delay: index * 0.1 }}
+                            >
+                                <Link to={`/posts/${post.id}`}>
+                                    {post.image && (
+                                        <img
+                                            src={post.image}
+                                            alt={post.title}
+                                            className="w-full h-48 object-cover"
+                                        />
+                                    )}
+                                    <div className="p-6">
+                                        <span className="text-sm font-semibold text-indigo-600">
+                                            {post.category}
+                                        </span>
+                                        <h3 className="text-xl font-bold text-gray-900 mt-2 mb-2">
+                                            {post.title}
+                                        </h3>
+                                        <p className="text-gray-700 leading-relaxed mb-4">
+                                            {post.content?.slice(0, 300)}...
+                                        </p>
+                                        <span className="font-semibold text-gray-900 hover:text-indigo-600 transition-colors">
+                                            Read More &rarr;
+                                        </span>
+                                    </div>
+                                </Link>
+                            </motion.div>
+                        ))
+                    ) : (
+                        <div className="col-span-full text-center py-16">
+                            <p className="text-lg text-gray-600">No articles available yet. Check back soon!</p>
+                        </div>
+                    )}
                 </div>
             </div>
         </section>

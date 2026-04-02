@@ -23,16 +23,27 @@ const EditPost = () => {
     useEffect(() => {
         if (!id) return;
         const postRef = ref(database, `posts/${id}`);
-        onValue(postRef, (snapshot) => {
-            const post = snapshot.val();
-            if (post) {
-                setFormData(post);
-            } else {
-                alert("Post not found!");
+        const unsubscribe = onValue(
+            postRef,
+            (snapshot) => {
+                const post = snapshot.val();
+                if (post) {
+                    setFormData(post);
+                } else {
+                    alert("Post not found!");
+                    navigate("/dashboard");
+                }
+                setLoading(false);
+            },
+            (error) => {
+                console.error("Error fetching post:", error);
+                alert("Failed to load post. Please try again.");
                 navigate("/dashboard");
             }
-            setLoading(false);
-        });
+        );
+
+        // Cleanup: unsubscribe from listener when component unmounts
+        return () => unsubscribe();
     }, [id, navigate]);
 
     const handleChange = (e) => {

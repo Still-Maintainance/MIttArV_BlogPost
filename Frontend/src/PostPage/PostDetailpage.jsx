@@ -30,10 +30,19 @@ const BlogDetailPage = () => {
 
         // Fetch comments
         const commentsRef = ref(database, `comments/${id}`);
-        onValue(commentsRef, (snapshot) => {
-            if (snapshot.exists()) setComments(Object.values(snapshot.val()));
-            else setComments([]);
-        });
+        const unsubscribe = onValue(
+            commentsRef,
+            (snapshot) => {
+                if (snapshot.exists()) setComments(Object.values(snapshot.val()));
+                else setComments([]);
+            },
+            (error) => {
+                console.error("Error fetching comments:", error);
+            }
+        );
+
+        // Cleanup: unsubscribe from listener when component unmounts
+        return () => unsubscribe();
     }, [id]);
 
     // Handle posting a comment

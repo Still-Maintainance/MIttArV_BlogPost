@@ -28,19 +28,28 @@ const BlogPage = () => {
     // Fetch blogs from Firebase
     useEffect(() => {
         const postsRef = ref(database, "posts");
-        onValue(postsRef, (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                const blogsArray = Object.entries(data).map(([id, blog]) => ({
-                    id,
-                    ...blog,
-                }));
-                setAllBlogs(blogsArray);
-                setFilteredBlogs(blogsArray);
-                setItems(blogsArray.slice(0, 6));
-                setHasMore(blogsArray.length > 6);
+        const unsubscribe = onValue(
+            postsRef,
+            (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    const blogsArray = Object.entries(data).map(([id, blog]) => ({
+                        id,
+                        ...blog,
+                    }));
+                    setAllBlogs(blogsArray);
+                    setFilteredBlogs(blogsArray);
+                    setItems(blogsArray.slice(0, 6));
+                    setHasMore(blogsArray.length > 6);
+                }
+            },
+            (error) => {
+                console.error("Error fetching blogs:", error);
             }
-        });
+        );
+
+        // Cleanup: unsubscribe from listener when component unmounts
+        return () => unsubscribe();
     }, []);
 
     // Filter blogs on search change

@@ -78,24 +78,42 @@ const DashboardPage = () => {
 
         // Fetch posts
         const postsRef = ref(database, "posts");
-        onValue(postsRef, (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                const userPostsArray = Object.entries(data)
-                    .filter(([_, post]) => post.authorId === user.uid)
-                    .map(([key, post]) => ({ id: key, ...post }));
-                setUserPosts(userPostsArray);
-            } else {
-                setUserPosts([]);
+        const unsubscribePosts = onValue(
+            postsRef,
+            (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    const userPostsArray = Object.entries(data)
+                        .filter(([_, post]) => post.authorId === user.uid)
+                        .map(([key, post]) => ({ id: key, ...post }));
+                    setUserPosts(userPostsArray);
+                } else {
+                    setUserPosts([]);
+                }
+            },
+            (error) => {
+                console.error("Error fetching user posts:", error);
             }
-        });
+        );
 
         // Fetch profile
         const profileRef = ref(database, `profiles/${user.uid}`);
-        onValue(profileRef, (snapshot) => {
-            const profileData = snapshot.val();
-            if (profileData) setProfile(profileData);
-        });
+        const unsubscribeProfile = onValue(
+            profileRef,
+            (snapshot) => {
+                const profileData = snapshot.val();
+                if (profileData) setProfile(profileData);
+            },
+            (error) => {
+                console.error("Error fetching profile:", error);
+            }
+        );
+
+        // Cleanup: unsubscribe from both listeners when component unmounts
+        return () => {
+            unsubscribePosts();
+            unsubscribeProfile();
+        };
     }, [navigate]);
 
     return (

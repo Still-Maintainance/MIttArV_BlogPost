@@ -23,16 +23,26 @@ const ProfilePage = () => {
 
         // Fetch posts by this user
         const postsRef = ref(database, "posts");
-        onValue(postsRef, (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                const blogs = Object.entries(data)
-                    .filter(([_, post]) => post.authorId === userId)
-                    .map(([id, post]) => ({ id, ...post }));
-                setUserBlogs(blogs);
-            } else setUserBlogs([]);
-            setLoading(false);
-        });
+        const unsubscribe = onValue(
+            postsRef,
+            (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    const blogs = Object.entries(data)
+                        .filter(([_, post]) => post.authorId === userId)
+                        .map(([id, post]) => ({ id, ...post }));
+                    setUserBlogs(blogs);
+                } else setUserBlogs([]);
+                setLoading(false);
+            },
+            (error) => {
+                console.error("Error fetching user blogs:", error);
+                setLoading(false);
+            }
+        );
+
+        // Cleanup: unsubscribe from listener when component unmounts
+        return () => unsubscribe();
     }, [userId]);
 
     if (loading) return <p className="text-center mt-10">Loading profile...</p>;
