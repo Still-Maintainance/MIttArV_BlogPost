@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -18,7 +18,11 @@ const containerVariant = {
 };
 
 const BlogPage = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const categoryParam = searchParams.get("category");
+    
     const [search, setSearch] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState(categoryParam || "");
     const [allBlogs, setAllBlogs] = useState([]);
     const [items, setItems] = useState([]);
     const [filteredBlogs, setFilteredBlogs] = useState([]);
@@ -52,13 +56,25 @@ const BlogPage = () => {
         return () => unsubscribe();
     }, []);
 
-    // Filter blogs on search change
+    // Sync selected category with URL params
     useEffect(() => {
-        const filtered = allBlogs.filter(
-            (blog) =>
+        const category = searchParams.get("category");
+        setSelectedCategory(category || "");
+    }, [searchParams]);
+
+    // Filter blogs on search change and category change
+    useEffect(() => {
+        const filtered = allBlogs.filter((blog) => {
+            const titleOrCategoryMatch =
                 blog.title?.toLowerCase().includes(search.toLowerCase()) ||
-                blog.category?.toLowerCase().includes(search.toLowerCase())
-        );
+                blog.category?.toLowerCase().includes(search.toLowerCase());
+
+            const categoryMatch =
+                !selectedCategory ||
+                blog.category?.toLowerCase() === selectedCategory.toLowerCase();
+
+            return titleOrCategoryMatch && categoryMatch;
+        });
 
         setFilteredBlogs(filtered);
         setItems(filtered.slice(0, 6));
@@ -74,7 +90,7 @@ const BlogPage = () => {
         } else {
             setSuggestions([]);
         }
-    }, [search, allBlogs]);
+    }, [search, allBlogs, selectedCategory]);
 
     const fetchMoreData = () => {
         if (items.length >= filteredBlogs.length) {
@@ -135,8 +151,20 @@ const BlogPage = () => {
                     viewport={{ once: true, amount: 0.3 }}
                 >
                     <h2 className="text-5xl sm:text-6xl font-bold text-gray-900">
-                        Blogs For You
+                        {selectedCategory ? `${selectedCategory} Posts` : "Blogs For You"}
                     </h2>
+                    {selectedCategory && (
+                        <button
+                            onClick={() => {
+                                setSelectedCategory("");
+                                setSearchParams({});
+                                setSearch("");
+                            }}
+                            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                            Clear Filter
+                        </button>
+                    )}
                 </motion.div>
 
                 {/* Infinite Scroll */}
