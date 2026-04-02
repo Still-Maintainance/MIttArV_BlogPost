@@ -21,7 +21,13 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize services (Auth, Google Provider, Realtime Database, Storage)
 const auth = getAuth(app);
+
+// Configure Google Auth Provider with custom settings
 const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({
+    "prompt": "select_account"
+});
+
 const database = getDatabase(app);
 const storage = getStorage(app);
 
