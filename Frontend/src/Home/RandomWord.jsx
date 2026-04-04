@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 // eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion'
+import { motion } from "framer-motion";
 
 // Large word list
 const words = [
@@ -34,9 +34,21 @@ const RandomWord = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const generateWord = () => {
+    const getWordOfDay = () => {
+        const today = new Date().toISOString().split('T')[0];
+        const storageKey = `wordOfDay_${today}`;
+
+        const storedWord = localStorage.getItem(storageKey);
+        if (storedWord) {
+            return storedWord;
+        }
+
         const randomIndex = Math.floor(Math.random() * words.length);
-        return words[randomIndex];
+        const newWord = words[randomIndex];
+
+        localStorage.setItem(storageKey, newWord);
+
+        return newWord;
     };
 
     useEffect(() => {
@@ -44,28 +56,30 @@ const RandomWord = () => {
             try {
                 setLoading(true);
                 setError(null);
-                const newWord = generateWord();
+
+                const newWord = getWordOfDay(); // ✅ fixed
                 setWord(newWord);
 
-                const response = await axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${newWord}`, {
-                    timeout: 5000, // 5 second timeout
-                });
+                const response = await axios.get(
+                    `https://api.dictionaryapi.dev/api/v2/entries/en/${newWord}`,
+                    { timeout: 5000 }
+                );
 
                 if (response.data && response.data.length > 0) {
                     setRes(response.data[0]);
-                    setError(null);
                 } else {
                     throw new Error("No data returned");
                 }
             } catch (error) {
                 console.error("Error fetching dictionary data:", error.message);
 
-                // Fallback: Create a simple definition from the word itself
+                const fallbackWord = getWordOfDay(); // ✅ fixed
+
                 const simpleDefinition = {
-                    word: word || "Word",
+                    word: fallbackWord,
                     meanings: [{
                         definitions: [{
-                            definition: `A word of interest. "${word}" carries meaning in various contexts.`,
+                            definition: `A word of interest. "${fallbackWord}" carries meaning in various contexts.`,
                             example: "This word is part of our ongoing vocabulary building journey."
                         }]
                     }]
@@ -84,7 +98,9 @@ const RandomWord = () => {
     if (loading) {
         return (
             <div className="flex justify-center mt-6">
-                <p className="text-center text-gray-500 font-playfair">Loading word of inspiration...</p>
+                <p className="text-center text-gray-500 font-playfair">
+                    Loading word of inspiration...
+                </p>
             </div>
         );
     }
@@ -94,51 +110,66 @@ const RandomWord = () => {
     const definition = meaning?.definitions?.[0]?.definition;
     const example = meaning?.definitions?.[0]?.example;
 
-
     return (
         <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
         >
             <div className="flex justify-center mt-6 px-4">
-                <p className="font-playfair font-semibold text-3xl sm:text-4xl md:text-5xl text-center">Improve Your Vocab</p>
+                <motion.p
+                    className="font-playfair font-semibold text-5xl max-lg:text-4xl max-md:text-3xl max-sm:text-2xl text-center"
+                    initial={{ opacity: 0, x: -50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+                >
+                    Improve Your Vocab
+                </motion.p>
             </div>
-            <div className="flex font-playfair justify-center mt-8 mb-24 px-4 sm:px-6 lg:px-8">
-                <div className="bg-white rounded-xl p-6 sm:p-8 max-w-3xl w-full border border-gray-200 flex flex-col md:flex-row gap-6">
 
-                    {/* Error Message */}
+            <div className="flex font-playfair justify-center mt-8 mb-24 px-8 max-lg:px-6 max-md:px-4">
+                <motion.div
+                    className="bg-white rounded-xl p-8 max-lg:p-6 max-md:p-4 max-w-3xl w-full border border-gray-200 flex flex-row max-md:flex-col gap-6"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+                >
                     {error && (
-                        <div className="w-full mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <motion.div
+                            className="w-full mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg"
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                        >
                             <p className="text-sm text-yellow-800">{error}</p>
-                        </div>
+                        </motion.div>
                     )}
 
-                    {/* Left Column: Word + Phonetic */}
-                    <div className="flex-1 flex flex-col p-4 sm:p-8 items-center md:items-start justify-center border-b md:border-r md:border-b-0 border-gray-200">
-                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-playfair font-bold mb-2 text-center md:text-left">{word}</h2>
-                        {phonetic && <p className="text-sm sm:text-base text-gray-500 italic">/{phonetic}/</p>}
-                    </div>
+                    {/* Left */}
+                    <motion.div className="flex-1 flex flex-col p-8 max-lg:p-6 max-md:p-4 items-center md:items-start justify-center border-b md:border-r md:border-b-0 border-gray-200">
+                        <h2 className="text-5xl font-bold mb-2">{word}</h2>
+                        {phonetic && <p className="text-gray-500 italic">/{phonetic}/</p>}
+                    </motion.div>
 
-                    {/* Right Column: Definitions and others */}
-                    <div className="flex-1 flex flex-col p-4 sm:p-5 justify-start">
+                    {/* Right */}
+                    <motion.div className="flex-1 flex flex-col p-6">
                         <div className="mb-4">
-                            <h3 className="font-bold text-base sm:text-lg mb-1">Definition:</h3>
-                            <p className="text-sm sm:text-base text-gray-800">{definition || "No definition found."}</p>
+                            <h3 className="font-bold mb-1">Definition:</h3>
+                            <p>{definition || "No definition found."}</p>
                         </div>
 
                         {example && (
-                            <div className="mb-4">
-                                <h3 className="font-bold text-base sm:text-lg mb-1">Example:</h3>
-                                <p className="text-sm sm:text-base text-gray-800 italic">"{example}"</p>
+                            <div>
+                                <h3 className="font-bold mb-1">Example:</h3>
+                                <p className="italic">"{example}"</p>
                             </div>
                         )}
-                    </div>
-                </div>
+                    </motion.div>
+                </motion.div>
             </div>
         </motion.div>
-    );
     );
 };
 
