@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 // eslint-disable-next-line no-unused-vars
-import {motion} from 'framer-motion'
+import { motion } from 'framer-motion'
 
 // Large word list
 const words = [
@@ -50,7 +50,7 @@ const RandomWord = () => {
                 const response = await axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${newWord}`, {
                     timeout: 5000, // 5 second timeout
                 });
-                
+
                 if (response.data && response.data.length > 0) {
                     setRes(response.data[0]);
                     setError(null);
@@ -59,7 +59,7 @@ const RandomWord = () => {
                 }
             } catch (error) {
                 console.error("Error fetching dictionary data:", error.message);
-                
+
                 // Fallback: Create a simple definition from the word itself
                 const simpleDefinition = {
                     word: word || "Word",
@@ -70,7 +70,7 @@ const RandomWord = () => {
                         }]
                     }]
                 };
-                
+
                 setRes(simpleDefinition);
                 setError("Could not fetch definition. Showing generated definition.");
             } finally {
@@ -93,14 +93,14 @@ const RandomWord = () => {
     const meaning = res?.meanings?.[0];
     const definition = meaning?.definitions?.[0]?.definition;
     const example = meaning?.definitions?.[0]?.example;
-    
+
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 50 }}          
-            whileInView={{ opacity: 1, y: 0 }}        
-            viewport={{ once: true, amount: 0.3 }}   
-            transition={{ duration: 0.6, ease: "easeOut" }} 
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
         >
             <div className="flex justify-center mt-6 px-4">
                 <p className="font-playfair font-semibold text-3xl sm:text-4xl md:text-5xl text-center">Improve Your Vocab</p>
@@ -119,7 +119,7 @@ const RandomWord = () => {
                     <div className="flex-1 flex flex-col p-4 sm:p-8 items-center md:items-start justify-center border-b md:border-r md:border-b-0 border-gray-200">
                         <h2 className="text-3xl sm:text-4xl md:text-5xl font-playfair font-bold mb-2 text-center md:text-left">{word}</h2>
                         {phonetic && <p className="text-sm sm:text-base text-gray-500 italic">/{phonetic}/</p>}
-                    </div>  
+                    </div>
 
                     {/* Right Column: Definitions and others */}
                     <div className="flex-1 flex flex-col p-4 sm:p-5 justify-start">
