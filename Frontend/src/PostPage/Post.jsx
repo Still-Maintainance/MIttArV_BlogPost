@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -18,6 +18,8 @@ const containerVariant = {
 };
 
 const BlogPage = () => {
+    const [searchParams] = useSearchParams();
+    const categoryParam = searchParams.get("category");
     const [search, setSearch] = useState("");
     const [allBlogs, setAllBlogs] = useState([]);
     const [items, setItems] = useState([]);
@@ -38,9 +40,20 @@ const BlogPage = () => {
                         ...blog,
                     }));
                     setAllBlogs(blogsArray);
-                    setFilteredBlogs(blogsArray);
-                    setItems(blogsArray.slice(0, 6));
-                    setHasMore(blogsArray.length > 6);
+                    
+                    // If a category is provided in the URL, filter by that category
+                    if (categoryParam) {
+                        const categoryFiltered = blogsArray.filter(
+                            (blog) => blog.category?.toLowerCase() === categoryParam.toLowerCase()
+                        );
+                        setFilteredBlogs(categoryFiltered);
+                        setItems(categoryFiltered.slice(0, 6));
+                        setHasMore(categoryFiltered.length > 6);
+                    } else {
+                        setFilteredBlogs(blogsArray);
+                        setItems(blogsArray.slice(0, 6));
+                        setHasMore(blogsArray.length > 6);
+                    }
                 }
             },
             (error) => {
@@ -50,7 +63,7 @@ const BlogPage = () => {
 
         // Cleanup: unsubscribe from listener when component unmounts
         return () => unsubscribe();
-    }, []);
+    }, [categoryParam]);
 
     // Filter blogs on search change
     useEffect(() => {
@@ -135,7 +148,7 @@ const BlogPage = () => {
                     viewport={{ once: true, amount: 0.3 }}
                 >
                     <h2 className="text-5xl sm:text-6xl font-bold text-gray-900">
-                        Blogs For You
+                        {categoryParam ? `${categoryParam} Posts` : "Blogs For You"}
                     </h2>
                 </motion.div>
 

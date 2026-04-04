@@ -1,5 +1,9 @@
+import { Link } from "react-router-dom";
+
 function Footer() {
     const currentYear = new Date().getFullYear();
+
+    const categories = ["Technology", "Creativity", "Productivity", "Lifestyle"];
 
     return (
         <footer className="bg-gray-950  text-gray-300 font-playfair">
@@ -15,9 +19,9 @@ function Footer() {
                     <div>
                         <h3 className="font-semibold text-white tracking-wider uppercase mb-4">Quick Links</h3>
                         <ul>
-                            <li className="mb-2"><a href="#" className="hover:text-white transition-colors">Home</a></li>
+                            <li className="mb-2"><Link to="/" className="hover:text-white transition-colors">Home</Link></li>
                             <li className="mb-2"><a href="#" className="hover:text-white transition-colors">About</a></li>
-                            <li className="mb-2"><a href="#" className="hover:text-white transition-colors">Blog</a></li>
+                            <li className="mb-2"><Link to="/posts" className="hover:text-white transition-colors">Blog</Link></li>
                             <li className="mb-2"><a href="#" className="hover:text-white transition-colors">Contact</a></li>
                         </ul>
                     </div>
@@ -26,10 +30,16 @@ function Footer() {
                     <div>
                         <h3 className="font-semibold text-white tracking-wider uppercase mb-4">Categories</h3>
                         <ul>
-                            <li className="mb-2"><a href="#" className="hover:text-white transition-colors">Technology</a></li>
-                            <li className="mb-2"><a href="#" className="hover:text-white transition-colors">Creativity</a></li>
-                            <li className="mb-2"><a href="#" className="hover:text-white transition-colors">Productivity</a></li>
-                            <li className="mb-2"><a href="#" className="hover:text-white transition-colors">Lifestyle</a></li>
+                            {categories.map((category) => (
+                                <li key={category} className="mb-2">
+                                    <Link 
+                                        to={`/posts?category=${category}`} 
+                                        className="hover:text-white transition-colors"
+                                    >
+                                        {category}
+                                    </Link>
+                                </li>
+                            ))}
                         </ul>
                     </div>
 
